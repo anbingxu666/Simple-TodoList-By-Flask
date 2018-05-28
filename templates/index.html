@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TodoList</title>
+</head>
+<body>
+
+ <form method="post">
+
+     {{ add_form.csrf_token() }}
+     <h1>{{ add_form.thing.label }}</h1>{{ add_form.thing }}
+     {{ add_form.submit }}
+ </form>
+
+ {% for message in get_flashed_messages() %}
+    {{ message }}
+ {% endfor %}
+
+ <hr/>
+{% for thing in todo %}
+<li>{{ thing.thing }} <a href="{{ url_for('deleteL',id=thing.thing_id) }}">删除</a><br/> 时间：{{ thing.date }} <br/>状态：{{ thing.is_done }}</li>
+    <hr/>
+{% endfor %}
+
+</body>
+</html>
