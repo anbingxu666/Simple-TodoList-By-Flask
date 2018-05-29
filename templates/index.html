@@ -9,9 +9,9 @@
  <form method="post">
 
      {{ add_form.csrf_token() }}
-     <h1>{{ add_form.thing.label }}</h1>{{ add_form.thing }}
+     <a style="font-size: 50px">{{ add_form.thing.label }}<a/>{{ add_form.thing }}
      {{ add_form.submit }}
- </form>
+ <form/>
 
  {% for message in get_flashed_messages() %}
     {{ message }}
@@ -19,8 +19,25 @@
 
  <hr/>
 {% for thing in todo %}
-<li>{{ thing.thing }} <a href="{{ url_for('deleteL',id=thing.thing_id) }}">删除</a><br/> 时间：{{ thing.date }} <br/>状态：{{ thing.is_done }}</li>
-    <hr/>
+<li><a style="font-family:times;font-size: 35px">
+    {% if thing.is_done=="YES" %}
+        <s style="color: black">{{ thing.thing }}</s>
+    {% else %}
+        <b style="color: royalblue">{{ thing.thing }}</b>
+    {% endif %}
+    <a style="font-size: 20px;color: orangered;text-decoration: none" href="{{ url_for('deleteL',id=thing.thing_id) }}">删除</a><p/>
+    时间：{{ thing.date }}
+    <br/>
+    状态：{% if thing.is_done=="YES" %}
+    <a style="color: green;text-decoration: none" href="{{ url_for("change_statue",id=thing.thing_id) }}">
+    {{ thing.is_done }}
+    {% else %}
+    <a style="color: red;text-decoration: none" href="{{ url_for("change_statue",id=thing.thing_id) }}">
+    {{ thing.is_done }}<——点击完成
+{% endif %}
+
+    </a>
+<hr/>
 {% endfor %}
 
 </body>

@@ -1,7 +1,7 @@
 from flask import Flask,render_template,flash,request,redirect,url_for
 from flask_sqlalchemy import SQLAlchemy
 import datetime
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm,CsrfProtect
 from wtforms import StringField,SubmitField
 from wtforms.validators import DataRequired
 app = Flask(__name__)
@@ -9,9 +9,10 @@ app.config['SQLALCHEMY_DATABASE_URI']="mysql://root:mysql@localhost:3306/todo_de
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 app.secret_key="newmore"
 db=SQLAlchemy(app)
+csrf=CsrfProtect(app)
 class AddForm(FlaskForm):
     thing=StringField("事件:",validators=[DataRequired()])
-    submit=SubmitField("提交")
+    submit=SubmitField("添加")
 
 class TodoTable(db.Model):
     __tablename__="todo"
@@ -34,6 +35,7 @@ def hello_world():
         try:
             db.session.add(new_Todo)
             db.session.commit()
+            redirect(url_for("hello_world"))
             print("success")
         except Exception as e:
             print(e)
@@ -54,6 +56,17 @@ def deleteL(id):
         flash("删除失败")
         db.session.rollback()
     return redirect(url_for("hello_world"))
+@app.route('/change/<int:id>')
+def change_statue(id):
+    toL=TodoTable.query.get(id)
+    if toL.is_done=="NO":
+        toL.is_done="YES"
+        db.session.commit()
+    else:
+        toL.is_done="NO"
+        db.session.commit()
+    return redirect(url_for("hello_world"))
+
 
 if __name__ == '__main__':
     app.run()
